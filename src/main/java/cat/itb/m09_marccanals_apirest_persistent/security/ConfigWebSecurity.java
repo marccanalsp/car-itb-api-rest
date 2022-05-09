@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -23,6 +25,9 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(mUserDetailsService).passwordEncoder(encoder);
     }
 
+
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors() //amb aquesta línia evitem la configuració custom del cors en un fitxer a part
@@ -31,9 +36,9 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(entryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/me/**").hasRole("ADMIN") //per fer proves del forbidden
+                .antMatchers(HttpMethod.GET, "/me/**").hasRole("USER") //per fer proves del forbidden
                 .antMatchers(HttpMethod.GET, "/users/**", "/cars/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/users/**", "/cars/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/users/**", "/cars/").hasRole("USER")
                 .antMatchers(HttpMethod.PUT, "/cars/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/cars/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/cars/**").hasAnyRole("USER", "ADMIN")
@@ -41,4 +46,5 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
         // .and()
         // .csrf().disable();
     }
+
 }
